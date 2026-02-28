@@ -25,3 +25,9 @@ A starter Android app for a child-friendly memory game using Jetpack Compose.
 ## Notes
 - `SoundEffects` is wired but raw sound assets are intentionally not included yet.
 - Add your built-in offline animal images/sounds under `res/` content packs.
+
+## Gradle wrapper note
+
+This repository includes `gradle-wrapper.properties` and wrapper scripts.
+In environments where binary artifacts in PRs are disallowed, `gradle-wrapper.jar` may be omitted.
+When that happens, `./gradlew` falls back to a system-installed `gradle` executable.
