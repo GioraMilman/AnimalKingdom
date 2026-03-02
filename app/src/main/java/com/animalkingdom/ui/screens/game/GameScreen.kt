@@ -1,7 +1,9 @@
 package com.animalkingdom.ui.screens.game
 
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,22 +16,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.animalkingdom.game.BoardState
 import com.animalkingdom.game.CardState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
-import androidx.compose.animation.AnimatedContent
 
 @Composable
 fun GameScreen(
@@ -73,6 +76,10 @@ fun GameScreen(
 @Composable
 private fun CardTile(card: CardState, onClick: () -> Unit) {
     val shown = card.isFaceUp || card.isMatched
+    val context = LocalContext.current
+    val resourceId = remember(card.animalName) {
+        context.resources.getIdentifier(card.animalName, "drawable", context.packageName)
+    }
 
     Card(
         modifier = Modifier
@@ -98,10 +105,20 @@ private fun CardTile(card: CardState, onClick: () -> Unit) {
                             fadeOut(animationSpec = spring())
                 }
             ) { isShown ->
-                Text(
-                    text = if (isShown) card.emoji else "❓",
-                    style = MaterialTheme.typography.displaySmall
-                )
+                if (isShown) {
+                    if (resourceId != 0) {
+                        Image(
+                            painter = painterResource(id = resourceId),
+                            contentDescription = card.animalName,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text(text = card.animalName, style = MaterialTheme.typography.bodyLarge)
+                    }
+                } else {
+                    Text(text = "❓", style = MaterialTheme.typography.displaySmall)
+                }
             }
         }
     }

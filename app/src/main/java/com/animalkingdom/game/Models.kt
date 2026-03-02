@@ -8,7 +8,7 @@ enum class Difficulty(val rows: Int, val columns: Int, val pairCount: Int) {
 
 data class CardState(
     val id: Int,
-    val emoji: String,
+    val animalName: String,
     val isFaceUp: Boolean = false,
     val isMatched: Boolean = false
 )
