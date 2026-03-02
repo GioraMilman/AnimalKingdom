@@ -5,14 +5,40 @@ import kotlin.random.Random
 class GameEngine(
     private val random: Random = Random.Default
 ) {
-    private val animals = listOf("🐶", "🐱", "🐻", "🐸", "🐰", "🦁", "🐼", "🐵", "🦊", "🐨")
+    private val animals = listOf(
+        "Bear",
+        "Buffalo",
+        "DalmatianDog",
+        "Donkey",
+        "Elephant",
+        "Flamingo",
+        "Fox",
+        "Frog",
+        "Giraffe",
+        "Hippopotamus",
+        "Meerkat",
+        "OrangeCat",
+        "Owl",
+        "Panda",
+        "Parrot",
+        "Penguin",
+        "Rabbit",
+        "Raccoon",
+        "Squirrel",
+        "Tiger",
+        "Turtle",
+        "Warthog",
+        "WildBoar",
+        "Wolf",
+        "Zebra"
+    )
 
     fun initBoard(difficulty: Difficulty): BoardState {
         val chosenAnimals = animals.shuffled(random).take(difficulty.pairCount)
-        val cards = chosenAnimals.flatMapIndexed { index, emoji ->
+        val cards = chosenAnimals.flatMapIndexed { index, animalName ->
             listOf(
-                CardState(id = index, emoji = emoji),
-                CardState(id = index, emoji = emoji)
+                CardState(id = index, animalName = animalName),
+                CardState(id = index, animalName = animalName)
             )
         }.shuffled(random)
 
