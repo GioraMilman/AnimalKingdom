@@ -4,7 +4,7 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 
-class SoundEffects(context: Context) {
+class SoundEffects(private val context: Context) {
 
     enum class Effect { MATCH, WIN, TAP, STICKER_UNLOCK, ERROR }
 
@@ -19,12 +19,6 @@ class SoundEffects(context: Context) {
         .build()
 
     private val soundIds = mutableMapOf<Effect, Int>()
-
-    init {
-        // Hook for built-in offline content pack sound resources.
-        // Example usage:
-        // register(Effect.MATCH, R.raw.match)
-    }
 
     fun register(effect: Effect, rawResId: Int) {
         soundIds[effect] = soundPool.load(context, rawResId, 1)

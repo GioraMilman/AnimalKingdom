@@ -1,5 +1,6 @@
 package com.animalkingdom.ui.screens.game
 
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
@@ -25,6 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.animalkingdom.game.BoardState
 import com.animalkingdom.game.CardState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.AnimatedContent
 
 @Composable
 fun GameScreen(
@@ -68,6 +73,7 @@ fun GameScreen(
 @Composable
 private fun CardTile(card: CardState, onClick: () -> Unit) {
     val shown = card.isFaceUp || card.isMatched
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -77,12 +83,25 @@ private fun CardTile(card: CardState, onClick: () -> Unit) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(if (card.isMatched) Color(0xFFC8E6C9) else Color(0xFFFFF3E0)),
+                .background(
+                    if (card.isMatched) Color(0xFFC8E6C9)
+                    else Color(0xFFFFF3E0)
+                ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            AnimatedContent(targetState = shown, label = "flip", transitionSpec = { spring() }) { isShown ->
-                Text(text = if (isShown) card.emoji else "❓", style = MaterialTheme.typography.displaySmall)
+            AnimatedContent(
+                targetState = shown,
+                label = "flip",
+                transitionSpec = {
+                    fadeIn(animationSpec = spring()) togetherWith
+                            fadeOut(animationSpec = spring())
+                }
+            ) { isShown ->
+                Text(
+                    text = if (isShown) card.emoji else "❓",
+                    style = MaterialTheme.typography.displaySmall
+                )
             }
         }
     }
