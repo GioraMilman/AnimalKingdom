@@ -8,7 +8,7 @@ class GameEngine(
     private val animals = listOf(
         "bear_",
         "buffalo_",
-        "dalmatian_dog_",
+        "dalmatian_dog",
         "donkey_",
         "elephant_",
         "flamingo_",
