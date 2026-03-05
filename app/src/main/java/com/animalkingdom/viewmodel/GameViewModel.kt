@@ -23,9 +23,11 @@ class GameViewModel(
     val board: StateFlow<BoardState> = _board.asStateFlow()
 
     private var pendingHideJob: Job? = null
+    private var pendingPeekJob: Job? = null
 
     fun startGame(difficulty: Difficulty) {
         pendingHideJob?.cancel()
+        pendingPeekJob?.cancel()
         _board.value = engine.initBoard(difficulty)
     }
 
@@ -53,6 +55,21 @@ class GameViewModel(
                     _board.value = engine.hideUnmatchedFaceUp(_board.value)
                 }
             }
+        }
+    }
+
+    fun usePeek() {
+        val before = _board.value
+        val after = engine.usePeek(before)
+        if (after == before) return
+
+        pendingHideJob?.cancel()
+        pendingPeekJob?.cancel()
+        _board.value = after
+
+        pendingPeekJob = viewModelScope.launch {
+            delay(1200)
+            _board.value = engine.hideUnmatchedFaceUp(_board.value)
         }
     }
 

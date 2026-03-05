@@ -76,14 +76,17 @@ class GameEngine(
             updatedCards[second.index] = secondCard.copy(isFaceUp = true, isMatched = true)
             val matches = state.matchesFound + 1
             val complete = matches == state.difficulty.pairCount
+            val newStreak = state.streak + 1
             state.copy(
                 cards = updatedCards,
                 moves = state.moves + 1,
                 matchesFound = matches,
-                completed = complete
+                completed = complete,
+                streak = newStreak,
+                bestStreak = maxOf(state.bestStreak, newStreak)
             )
         } else {
-            state.copy(cards = updatedCards, moves = state.moves + 1)
+            state.copy(cards = updatedCards, moves = state.moves + 1, streak = 0)
         }
     }
 
@@ -92,5 +95,15 @@ class GameEngine(
             if (card.isFaceUp && !card.isMatched) card.copy(isFaceUp = false) else card
         }
         return state.copy(cards = newCards)
+    }
+
+    fun usePeek(state: BoardState): BoardState {
+        if (state.peekCharges <= 0 || state.completed) return state
+
+        val revealedCards = state.cards.map { card ->
+            if (!card.isMatched) card.copy(isFaceUp = true) else card
+        }
+
+        return state.copy(cards = revealedCards, peekCharges = state.peekCharges - 1)
     }
 }

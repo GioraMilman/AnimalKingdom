@@ -18,7 +18,10 @@ data class BoardState(
     val cards: List<CardState>,
     val moves: Int = 0,
     val matchesFound: Int = 0,
-    val completed: Boolean = false
+    val completed: Boolean = false,
+    val streak: Int = 0,
+    val bestStreak: Int = 0,
+    val peekCharges: Int = 2
 )
 
 data class Sticker(

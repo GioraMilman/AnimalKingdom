@@ -63,6 +63,7 @@ private fun AnimalMatchApp() {
             GameScreen(
                 board = board,
                 onCardTap = gameViewModel::tapCard,
+                onPeek = gameViewModel::usePeek,
                 onBackToMenu = { navController.popBackStack("menu", false) }
             )
         }

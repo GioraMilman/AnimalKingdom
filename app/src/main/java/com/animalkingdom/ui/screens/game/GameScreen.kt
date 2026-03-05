@@ -8,10 +8,12 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -19,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.Image
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,8 +41,12 @@ import com.animalkingdom.game.CardState
 fun GameScreen(
     board: BoardState,
     onCardTap: (Int) -> Unit,
+    onPeek: () -> Unit,
     onBackToMenu: () -> Unit
 ) {
+    val progress = board.matchesFound.toFloat() / board.difficulty.pairCount.toFloat()
+    val accuracy = if (board.moves == 0) 0 else ((board.matchesFound * 100f) / board.moves).toInt()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,6 +55,13 @@ fun GameScreen(
     ) {
         Text("Moves: ${board.moves}", fontWeight = FontWeight.Bold)
         Text("Matches: ${board.matchesFound}/${board.difficulty.pairCount}")
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp)
+        )
+        Text("Accuracy: ${accuracy}% • Streak: ${board.streak} • Best: ${board.bestStreak}")
 
         LazyVerticalGrid(
             modifier = Modifier.weight(1f),
@@ -66,6 +80,13 @@ fun GameScreen(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.ExtraBold
             )
+        }
+        Button(
+            onClick = onPeek,
+            enabled = board.peekCharges > 0 && !board.completed,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Peek at cards (${board.peekCharges} left)")
         }
         Button(onClick = onBackToMenu, modifier = Modifier.fillMaxWidth()) {
             Text("Back to menu")
@@ -107,12 +128,16 @@ private fun CardTile(card: CardState, onClick: () -> Unit) {
             ) { isShown ->
                 if (isShown) {
                     if (resourceId != 0) {
-                        Image(
-                            painter = painterResource(id = resourceId),
-                            contentDescription = card.animalName,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Image(
+                                painter = painterResource(id = resourceId),
+                                contentDescription = card.animalName,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(8.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
                     } else {
                         Text(text = card.animalName, style = MaterialTheme.typography.bodyLarge)
                     }
