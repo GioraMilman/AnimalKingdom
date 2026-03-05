@@ -25,10 +25,10 @@ class GameEngineTest {
         val board = BoardState(
             difficulty = Difficulty.EASY_2X2,
             cards = listOf(
-                CardState(id = 1, emoji = "🐶"),
-                CardState(id = 1, emoji = "🐶"),
-                CardState(id = 2, emoji = "🐱"),
-                CardState(id = 2, emoji = "🐱")
+                CardState(id = 1, animalName = "dog"),
+                CardState(id = 1, animalName = "dog"),
+                CardState(id = 2, animalName = "cat"),
+                CardState(id = 2, animalName = "cat")
             )
         )
 
@@ -38,6 +38,8 @@ class GameEngineTest {
         assertTrue(secondTap.cards[0].isMatched)
         assertTrue(secondTap.cards[1].isMatched)
         assertEquals(1, secondTap.matchesFound)
+        assertEquals(1, secondTap.streak)
+        assertEquals(1, secondTap.bestStreak)
     }
 
     @Test
@@ -46,10 +48,10 @@ class GameEngineTest {
         val board = BoardState(
             difficulty = Difficulty.EASY_2X2,
             cards = listOf(
-                CardState(id = 1, emoji = "🐶", isFaceUp = true),
-                CardState(id = 2, emoji = "🐱", isFaceUp = true),
-                CardState(id = 1, emoji = "🐶"),
-                CardState(id = 2, emoji = "🐱")
+                CardState(id = 1, animalName = "dog", isFaceUp = true),
+                CardState(id = 2, animalName = "cat", isFaceUp = true),
+                CardState(id = 1, animalName = "dog"),
+                CardState(id = 2, animalName = "cat")
             )
         )
 
@@ -57,5 +59,25 @@ class GameEngineTest {
 
         assertFalse(hidden.cards[0].isFaceUp)
         assertFalse(hidden.cards[1].isFaceUp)
+    }
+
+    @Test
+    fun usePeek_revealsUnmatchedAndConsumesCharge() {
+        val engine = GameEngine()
+        val board = BoardState(
+            difficulty = Difficulty.EASY_2X2,
+            cards = listOf(
+                CardState(id = 1, animalName = "dog", isMatched = true, isFaceUp = true),
+                CardState(id = 2, animalName = "cat"),
+                CardState(id = 3, animalName = "owl"),
+                CardState(id = 4, animalName = "fox")
+            ),
+            peekCharges = 2
+        )
+
+        val peeked = engine.usePeek(board)
+
+        assertEquals(1, peeked.peekCharges)
+        assertTrue(peeked.cards.drop(1).all { it.isFaceUp })
     }
 }
